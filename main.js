@@ -13,7 +13,11 @@ async function main() {
   const baseURL = process.argv[2]
   // Test: https://wagslane.dev
 
-  await crawlPage(baseURL)
+  console.log(`starting crawl of: ${baseURL}...`)
+
+  const pages = await crawlPage(baseURL, baseURL, {})
+
+  console.log(pages)
 }
 
 main()

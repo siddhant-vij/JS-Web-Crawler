@@ -31,23 +31,39 @@ function getURLsFromHTML(htmlBody, baseURL) {
   return urls
 }
 
-async function crawlPage(currentURL) {
+async function crawlPage(baseURL, currentURL, pages) {
+  const domain = new URL(baseURL).hostname
+  if (new URL(currentURL).hostname !== domain) {
+    return pages
+  }
+  const normalizedURL = normalizeURL(currentURL)
+  if (pages[normalizedURL]) {
+    pages[normalizedURL] += 1
+    return pages
+  } else {
+    pages[normalizedURL] = 1
+  }
+  console.log(`Crawling ${currentURL}`)
   try {
     const res = await fetch(currentURL)
     if (res.status >= 400) {
       console.error(`HTTP error ${res.status}: ${res.statusText}`)
-      return
+      return pages
     }
     const contentType = res.headers.get('content-type')
     if (!contentType || !contentType.includes('text/html')) {
       console.error(`Content type was not text/html: ${contentType}`)
-      return
+      return pages
     }
     const body = await res.text()
-    console.log(body)
+    const urls = getURLsFromHTML(body, baseURL)
+    for (const url of urls) {
+      pages = await crawlPage(baseURL, url, pages)
+    }
   } catch (err) {
     console.error(`Error fetching ${currentURL}: ${err.message}`)
   }
+  return pages
 }
 
 
