@@ -1,0 +1,10 @@
+{
+  "name": "js-web-crawler",
+  "version": "1.0.0",
+  "description": "Web Crawler in NodeJS",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "siddhant-vij",
+  "license": "MIT"
+}
